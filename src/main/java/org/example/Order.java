@@ -3,6 +3,7 @@ package org.example;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
 @Setter
 public class Order {
     private List<Product> products;
-    private double totalPrice;
+    private BigDecimal totalPrice;
     private String status;
 
     public Order(Cart cart) {

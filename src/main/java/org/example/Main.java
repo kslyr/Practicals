@@ -1,5 +1,6 @@
 package org.example;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,6 +12,7 @@ public class Main {
         // Створення користувача
         User user = new User("Студент");
 
+
         // Створення категорій
         Category electronics = new Category(1, "Електроніка");
         Category smartphones = new Category(2, "Смартфони");
@@ -18,10 +20,10 @@ public class Main {
         Category computer = new Category(4, "Комп'ютер");
 
         // Створення товарів
-        Product product1 = new Product(1, "Ноутбук", 19999.99, "Високопродуктивний ноутбук для роботи та ігор", electronics);
-        Product product2 = new Product(2, "Смартфон", 12999.50, "Смартфон з великим екраном та високою автономністю", smartphones);
-        Product product3 = new Product(3, "Навушники", 2499.00, "Бездротові навушники з шумозаглушенням", accessories);
-        Product product4 = new Product(4, "Клавіатура", 2000.00, "Магнітна клавіатура", computer);
+        Product product1 = new Product(1, "Ноутбук", new BigDecimal("19999.99"), "Високопродуктивний ноутбук для роботи та ігор", electronics);
+        Product product2 = new Product(2, "Смартфон", new BigDecimal("12999.50"), "Смартфон з великим екраном та високою автономністю", smartphones);
+        Product product3 = new Product(3, "Навушники", new BigDecimal("2499.00"), "Бездротові навушники з шумозаглушенням", accessories);
+        Product product4 = new Product(4, "Клавіатура", new BigDecimal("2000.00"), "Магнітна клавіатура", computer);
 
         // Каталог товарів
         List<Product> catalog = new ArrayList<>();

@@ -2,6 +2,7 @@ package org.example;
 
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +20,10 @@ public class Cart {
         products.remove(product);
     }
     // Метод для отримання загальної вартості товарів у кошику
-    public double getTotalPrice() {
-        double total = 0;
+    public BigDecimal getTotalPrice() {
+        BigDecimal total = BigDecimal.ZERO;
         for (Product product : products) {
-            total += product.getPrice();
+            total = total.add(product.getPrice());
         }
         return total;
     }
