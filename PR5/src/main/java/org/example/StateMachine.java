@@ -6,10 +6,6 @@ import static org.example.State.SECOND;
 import static org.example.State.START;
 import static org.example.State.THIRD;
 
-/**
- * Скінчений автомат, що шукає у рядку підрядок "TEST".
- * FINISH означає, що "TEST" знайдено.
- */
 public class StateMachine {
     private State state;
 

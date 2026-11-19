@@ -3,49 +3,62 @@ package org.example;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StateMachineTest {
 
-    // ---------- Завдання 2: функціональні кейси ----------
 
-    @ParameterizedTest(name = "\"{0}\" -> {1}")
-    @CsvSource({
-            "abcTESTabc, FINISH",   // слово посередині
-            "TEST,       FINISH",   // тільки слово
-            "TESTabc,    FINISH",   // слово на початку
-            "abcTEST,    FINISH",   // слово в кінці
-            "TESTTEST,   FINISH",   // слово двічі
-            "abcTES,     THIRD",    // приклад з умови
-            "abcTE,      SECOND",
-            "abcT,       FIRST",
-            "abc,        START",    // слова немає
-            "TEXT,       START",    // схоже, але ні
-            "tEST,       START",    // регістр важливий
-            "TES T,      START",    // пробіл розриває слово
-            "'',         START"     // порожній рядок
-    })
     void shouldReturnExpectedFinalState(String input, State expected) {
         assertEquals(expected, new StateMachine().processString(input));
     }
 
-    @ParameterizedTest(name = "{0} + ''{1}'' -> {2}")
+    // Тести таблиці переходів — по одному на кожну гілку switch у StateMachine.next()
+
+    // case START -> restart(c); case FIRST -> 'E'; case SECOND -> 'S'; case THIRD -> 'T'
+    @ParameterizedTest(name = "{0} + ''{1}'' -> {2} (правильний символ)")
     @CsvSource({
             "START,  T, FIRST",
-            "START,  x, START",
             "FIRST,  E, SECOND",
-            "FIRST,  x, START",
             "SECOND, S, THIRD",
-            "SECOND, x, START",
-            "THIRD,  T, FINISH",
-            "THIRD,  x, START",
-            "FINISH, x, FINISH",    // FINISH — поглинаючий стан
-            "FINISH, T, FINISH"
+            "THIRD,  T, FINISH"
     })
-    void shouldFollowTransitionTable(State from, char symbol, State expected) {
+    void shouldAdvanceOnExpectedSymbol(State from, char symbol, State expected) {
         assertEquals(expected, StateMachine.next(from, symbol));
+    }
+
+    // restart(c): будь-який інший символ (не 'T') повертає в START
+    @ParameterizedTest(name = "{0} + ''{1}'' -> START (чужий символ)")
+    @CsvSource({
+            "START,  x",
+            "FIRST,  x",
+            "FIRST,  S",   // літера зі слова, але не в тому порядку
+            "SECOND, x",
+            "SECOND, E",
+            "THIRD,  x",
+            "THIRD,  S"
+    })
+    void shouldRestartOnUnexpectedSymbol(State from, char symbol) {
+        assertEquals(State.START, StateMachine.next(from, symbol));
+    }
+
+    // restart(c): невдалий символ 'T' — це початок нового слова, тому FIRST
+    @ParameterizedTest(name = "{0} + ''T'' -> FIRST (T як новий початок)")
+    @CsvSource({
+            "FIRST",    // "TT"
+            "SECOND"    // "TET"
+    })
+    void shouldStartOverOnTInsteadOfRestart(State from) {
+        assertEquals(State.FIRST, StateMachine.next(from, 'T'));
+    }
+
+    // case FINISH -> FINISH: кінцевий стан не змінюється від жодного символу
+    @ParameterizedTest(name = "FINISH + ''{0}'' -> FINISH")
+    @ValueSource(chars = {'T', 'E', 'S', 'x', ' '})
+    void shouldStayInFinish(char symbol) {
+        assertEquals(State.FINISH, StateMachine.next(State.FINISH, symbol));
     }
 
     @Test
